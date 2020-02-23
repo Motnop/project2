@@ -7,15 +7,17 @@
   <div class="row mt-5">
     {% for tour_id, tour in tours.items() %}
       {%  if churl == tour.departure %}
-        <div class="col-4">
-          <div class="card mb-4">
+        <div class="col-4 mb-4">
+          <div class="card h-100">
             <div class="embed-responsive embed-responsive-16by9">
               <img class="card-img-top embed-responsive-item" src="{{ tour.picture }}" alt="{{ tour.title }}"/>
             </div>
             <div class="card-body">
               <h2 class="h5 card-title">{{ tour.title }}</h2>
-              <p class="card-text">{{ tour.description[:150] }}...</p>
-              <a href="/tour/{{ tour_id }}" class="btn btn-sm btn-primary">Подробнее</a>
+              <p class="card-text">{{ tour.description|truncate(100) }}</p>
+            </div>
+            <div class="card-footer bg-transparent border-0 ">
+              <a href="/tour/{{ tour_id }}" class="btn btn-sm btn-primary w-100">Подробнее</a>
             </div>
           </div>
         </div>

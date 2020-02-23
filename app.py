@@ -2,26 +2,30 @@ from flask import Flask, render_template
 import data
 
 
+
+def top_tours(tours, count_top, type_sort):
+    new_tours = {}
+    keys = sorted(tours, key=lambda x: tours[x][type_sort], reverse=True)
+    print(keys)
+    for key in keys[:count_top]:
+        new_tours[key] = tours.get(key, 'нет ключа')
+    return new_tours
+
 def count_derection_stats(direction):
-    count = 0
-    price = []
-    night = set()
-    tours = data.tours
-    for i in tours:
-        if tours[i]["departure"] == direction:
-            count += 1
-            price.append(tours[i]["price"])
-            night.add(tours[i]["nights"])
-    price.sort()
-    min = price[0]
-    max = price[-1]
+    # Исходя из заданного направления считает количество туров, ночей(мин, макс), цену(мин, макс)
+    tours = list(filter(lambda tour: tour['departure'] == direction, data.tours.values()))
+    count = len(tours)
+    price_max = max(tours, key=lambda x: x['price'])['price']
+    price_min = min(tours, key=lambda x: x['price'])['price']
+    night_min = min(tours, key=lambda x: x['nights'])['nights']
+    night_max = max(tours, key=lambda x: x['nights'])['nights']
     return {
-            'count': count,
-            'min': min,
-            'max': max,
-            'night_min': sorted(night)[0],
-            'night_max': sorted(night)[-1]
-            }
+        'count': count,
+        'min': price_min,
+        'max': price_max,
+        'night_min': night_min,
+        'night_max': night_max
+     }
 
 
 app = Flask(__name__)
@@ -31,7 +35,7 @@ def index():
     return render_template('index.html',
                             departures=data.departures, title=data.title,
                             subtitle=data.subtitle,
-                            description=data.description, tours=data.tours
+                            description=data.description, tours=top_tours(data.tours, 6, 'price')
                             )
 
 
